@@ -73,6 +73,11 @@ jobs:
                - Si no existe, créalo con `gh issue comment ${{ github.event.issue.number }} --body ...`.
 
             FORMATO DEL COMENTARIO (español, conciso)
+            - El comentario DEBE estar en Markdown compatible con GitHub (GitHub Flavored Markdown): encabezados con `##`, negritas con `**`, listas con `-`, código en línea con backticks y bloques de código con ``` y lenguaje (ej. ```js).
+            - Referencia archivos como `game.js:120` en código en línea. No uses HTML salvo el marcador `<!-- claude-triage -->`.
+            - Deja una línea en blanco entre secciones y antes/después de listas y bloques de código para que GitHub los renderice bien.
+            - Al enviar el cuerpo con `gh`, respeta los saltos de línea reales (usa `--body-file` o un heredoc), no secuencias literales `\n`.
+
             <!-- claude-triage -->
             ## Diagnóstico de Claude
             **Resumen:** qué reporta el issue en 1-2 frases.
