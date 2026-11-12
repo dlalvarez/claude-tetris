@@ -22,6 +22,7 @@
   --block-5: #e57373;
   --block-6: #90caf9;
   --block-7: #ffb74d;
+  --block-8: #b0bec5;
 }
 
 :root[data-theme="light"] {
@@ -48,6 +49,7 @@
   --block-5: #e53935;
   --block-6: #1e88e5;
   --block-7: #fb8c00;
+  --block-8: #607d8b;
 }
 
 *, *::before, *::after {

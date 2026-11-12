@@ -6,7 +6,7 @@ const BLOCK = 30;
 
 // Colores de piezas, grilla y brillo: viven en variables CSS
 // (:root = dark, [data-theme="light"] = light) y se cachean aquí.
-const COLORS = [null, '', '', '', '', '', '', ''];
+const COLORS = [null, '', '', '', '', '', '', '', ''];
 const theme = { grid: '', highlight: '' };
 
 function loadTheme() {
@@ -26,6 +26,7 @@ const PIECES = [
   [[5,5,0],[0,5,5],[0,0,0]],                  // Z
   [[6,0,0],[6,6,6],[0,0,0]],                  // J
   [[0,0,7],[7,7,7],[0,0,0]],                  // L
+  [[8,8,8],[8,0,8],[8,8,8]],                  // Tuerca (reto: hueco central)
 ];
 
 const LINE_SCORES = [0, 100, 300, 500, 800];
@@ -49,7 +50,7 @@ function createBoard() {
 }
 
 function randomPiece() {
-  const type = Math.floor(Math.random() * 7) + 1;
+  const type = Math.floor(Math.random() * (PIECES.length - 1)) + 1;
   const shape = PIECES[type].map(row => [...row]);
   return { type, shape, x: Math.floor(COLS / 2) - Math.floor(shape[0].length / 2), y: 0 };
 }
