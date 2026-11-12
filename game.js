@@ -4,16 +4,18 @@ const COLS = 10;
 const ROWS = 20;
 const BLOCK = 30;
 
-const COLORS = [
-  null,
-  '#4dd0e1', // I - cyan
-  '#ffd54f', // O - yellow
-  '#ba68c8', // T - purple
-  '#81c784', // S - green
-  '#e57373', // Z - red
-  '#90caf9', // J - pale blue
-  '#ffb74d', // L - orange
-];
+// Colores de piezas, grilla y brillo: viven en variables CSS
+// (:root = dark, [data-theme="light"] = light) y se cachean aquí.
+const COLORS = [null, '', '', '', '', '', '', ''];
+const theme = { grid: '', highlight: '' };
+
+function loadTheme() {
+  const css = getComputedStyle(document.documentElement);
+  for (let i = 1; i < COLORS.length; i++)
+    COLORS[i] = css.getPropertyValue(`--block-${i}`).trim();
+  theme.grid = css.getPropertyValue('--grid').trim();
+  theme.highlight = css.getPropertyValue('--highlight').trim();
+}
 
 const PIECES = [
   null,
@@ -163,13 +165,13 @@ function drawBlock(context, x, y, colorIndex, size, alpha) {
   context.fillStyle = color;
   context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
   // highlight
-  context.fillStyle = 'rgba(255,255,255,0.12)';
+  context.fillStyle = theme.highlight;
   context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
   context.globalAlpha = 1;
 }
 
 function drawGrid() {
-  ctx.strokeStyle = '#22222e';
+  ctx.strokeStyle = theme.grid;
   ctx.lineWidth = 0.5;
   for (let c = 1; c < COLS; c++) {
     ctx.beginPath();
@@ -301,4 +303,23 @@ document.addEventListener('keydown', e => {
 
 restartBtn.addEventListener('click', init);
 
+const themeToggle = document.getElementById('theme-toggle');
+
+function setTheme(mode) {
+  const light = mode === 'light';
+  if (light) document.documentElement.dataset.theme = 'light';
+  else delete document.documentElement.dataset.theme;
+  themeToggle.setAttribute('aria-checked', String(light));
+  loadTheme();
+  // En pausa o game over el loop no corre: redibujar a mano.
+  draw();
+  drawNext();
+}
+
+themeToggle.addEventListener('click', () => {
+  setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+  themeToggle.blur(); // evita que Space (caída) active el botón
+});
+
+loadTheme();
 init();
