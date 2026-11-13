@@ -247,8 +247,8 @@ kbd {
   color: var(--accent);
 }
 
-#restart-btn {
-  margin-top: 8px;
+.menu-btn {
+  min-width: 180px;
   background: var(--accent);
   color: var(--bg);
   border: none;
@@ -261,6 +261,58 @@ kbd {
   transition: background 0.15s;
 }
 
-#restart-btn:hover {
+.menu-btn:hover {
   background: var(--accent-hover);
+}
+
+.menu-btn.secondary {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+
+.menu-btn.secondary:hover {
+  background: var(--surface);
+}
+
+.menu-btn:focus-visible,
+#start-level:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+/* Opciones solo de la pausa: ocultas en game over */
+.overlay:not(.is-pause) .pause-only {
+  display: none;
+}
+
+.menu-controls {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.menu-controls.hidden {
+  display: none;
+}
+
+.menu-level {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--label);
+  letter-spacing: 1px;
+}
+
+#start-level {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
 }
