@@ -8,6 +8,7 @@ const BLOCK = 30;
 // (:root = dark, [data-theme="light"] = light) y se cachean aquí.
 const COLORS = [null, '', '', '', '', '', '', '', ''];
 const theme = { grid: '', highlight: '' };
+let skin = 'retro';
 
 function loadTheme() {
   const css = getComputedStyle(document.documentElement);
@@ -159,15 +160,61 @@ function updateHUD() {
   levelEl.textContent = level;
 }
 
+// ---- Skins: cada una aporta su función de dibujo de bloque ----
+// Los colores de cada skin viven en CSS ([data-skin="..."]) y se cachean en COLORS.
+const SKINS = {
+  retro(context, px, py, s, color) {
+    context.fillStyle = color;
+    context.fillRect(px, py, s, s);
+    context.fillStyle = theme.highlight;
+    context.fillRect(px, py, s, 4);
+  },
+
+  neon(context, px, py, s, color) {
+    context.shadowColor = color;
+    context.shadowBlur = 14;
+    context.fillStyle = color;
+    context.fillRect(px + 2, py + 2, s - 4, s - 4);
+    context.shadowBlur = 0;
+    // núcleo claro para dar sensación de tubo de luz
+    context.fillStyle = theme.highlight;
+    context.fillRect(px + 5, py + 5, s - 10, s - 10);
+  },
+
+  pastel(context, px, py, s, color) {
+    const r = Math.round(s * 0.3);
+    context.fillStyle = color;
+    context.beginPath();
+    context.roundRect(px, py, s, s, r);
+    context.fill();
+    context.fillStyle = theme.highlight;
+    context.beginPath();
+    context.roundRect(px + 3, py + 3, s - 6, 5, 2.5);
+    context.fill();
+  },
+
+  pixel(context, px, py, s, color) {
+    // Rejilla de 7×7 "píxeles": borde claro arriba/izq., oscuro abajo/der., trama de damero.
+    const n = 7, p = s / n;
+    context.fillStyle = color;
+    context.fillRect(px, py, s, s);
+    context.fillStyle = 'rgba(255,255,255,0.4)';
+    context.fillRect(px, py, s, p);
+    context.fillRect(px, py, p, s);
+    context.fillStyle = 'rgba(0,0,0,0.4)';
+    context.fillRect(px, py + s - p, s, p);
+    context.fillRect(px + s - p, py, p, s);
+    context.fillStyle = 'rgba(0,0,0,0.16)';
+    for (let i = 1; i < n - 1; i++)
+      for (let j = 1; j < n - 1; j++)
+        if ((i + j) % 2 === 0) context.fillRect(px + i * p, py + j * p, p, p);
+  },
+};
+
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
   context.globalAlpha = alpha ?? 1;
-  context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  // highlight
-  context.fillStyle = theme.highlight;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+  SKINS[skin](context, x * size + 1, y * size + 1, size - 2, COLORS[colorIndex]);
   context.globalAlpha = 1;
 }
 
@@ -325,5 +372,26 @@ themeToggle.addEventListener('click', () => {
   themeToggle.blur(); // evita que Space (caída) active el botón
 });
 
-loadTheme();
+// ---- Selector de skin (persistido en localStorage) ----
+const skinSelect = document.getElementById('skin-select');
+const SKIN_KEY = 'tetris-skin';
+
+function setSkin(name, redraw = true) {
+  if (!SKINS[name]) name = 'retro';
+  skin = name;
+  document.documentElement.dataset.skin = name;
+  skinSelect.value = name;
+  try { localStorage.setItem(SKIN_KEY, name); } catch (_) { /* modo privado: sin persistencia */ }
+  loadTheme();
+  if (redraw) { draw(); drawNext(); }
+}
+
+skinSelect.addEventListener('change', () => {
+  setSkin(skinSelect.value);
+  skinSelect.blur(); // evita que flechas/Space sigan cambiando el select
+});
+
+let saved = null;
+try { saved = localStorage.getItem(SKIN_KEY); } catch (_) { /* sin acceso a storage */ }
+setSkin(saved, false);
 init();
