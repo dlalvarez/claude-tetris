@@ -23,6 +23,7 @@
   --block-6: #90caf9;
   --block-7: #ffb74d;
   --block-8: #b0bec5;
+  --record-new-bg: rgba(122, 162, 247, 0.2);
 }
 
 :root[data-theme="light"] {
@@ -50,6 +51,7 @@
   --block-6: #1e88e5;
   --block-7: #fb8c00;
   --block-8: #607d8b;
+  --record-new-bg: rgba(47, 95, 208, 0.15);
 }
 
 *, *::before, *::after {
@@ -247,7 +249,7 @@ kbd {
   color: var(--accent);
 }
 
-#restart-btn {
+#restart-btn, #play-btn, #save-btn {
   margin-top: 8px;
   background: var(--accent);
   color: var(--bg);
@@ -261,6 +263,104 @@ kbd {
   transition: background 0.15s;
 }
 
-#restart-btn:hover {
+#restart-btn:hover, #play-btn:hover, #save-btn:hover {
   background: var(--accent-hover);
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---- Records ---- */
+#start-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  color: var(--accent);
+}
+
+.records {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.scores {
+  list-style: none;
+  min-width: 260px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+}
+
+.scores li {
+  display: grid;
+  grid-template-columns: 28px 1fr auto 52px;
+  gap: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  text-align: left;
+  color: var(--text);
+}
+
+.scores li span:nth-child(3),
+.scores li span:nth-child(4) {
+  text-align: right;
+}
+
+.scores li.empty {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+}
+
+.scores li.new {
+  background: var(--record-new-bg);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.bests {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.name-entry {
+  display: flex;
+  gap: 8px;
+}
+
+.name-entry input {
+  width: 150px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  user-select: text;
+}
+
+.name-entry input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.name-entry #save-btn {
+  margin-top: 0;
+  padding: 8px 16px;
+}
+
+.reset-btn {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--danger);
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.reset-btn:hover {
+  border-color: var(--danger);
 }
