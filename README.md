@@ -46,6 +46,7 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Game Over** con opción de reinicio.
 - **Modo claro / oscuro**: el juego inicia siempre en oscuro; el interruptor `LIGHT` (abajo a la derecha del panel) cambia el tema durante la partida. La preferencia no se guarda entre sesiones.
 - **Tabla de records local** (`localStorage`, clave `tetris.records`): top 5 de puntuaciones con nombre (máx. 12 caracteres, se pide al terminar la partida si entras al top), visible en la pantalla de inicio y en el overlay de Game Over. La entrada actual aparece resaltada. También guarda el **mejor combo** (bloqueos consecutivos que limpian al menos una línea) y las **líneas máximas** en una sola partida. El botón `Resetear records` borra todo. Si reinicias sin escribir nombre, se guarda como `ANÓNIMO`.
+- **Skins**: selector `SKIN` en el panel que cambia la apariencia sin recargar: **Retro** (bloques planos), **Neon** (fondo negro y brillo con `shadowBlur`; ignora el modo claro/oscuro), **Pastel** (colores suaves, bordes redondeados) y **Pixel art** (textura de píxeles sobre cada bloque). La elección se guarda en `localStorage`.
 
 ---
 
