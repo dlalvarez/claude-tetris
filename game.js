@@ -159,16 +159,83 @@ function updateHUD() {
   levelEl.textContent = level;
 }
 
+// Rectángulo redondeado (roundRect no existe en navegadores antiguos).
+function roundedRect(context, x, y, w, h, r) {
+  context.beginPath();
+  if (context.roundRect) { context.roundRect(x, y, w, h, r); return; }
+  context.moveTo(x + r, y);
+  context.arcTo(x + w, y, x + w, y + h, r);
+  context.arcTo(x + w, y + h, x, y + h, r);
+  context.arcTo(x, y + h, x, y, r);
+  context.arcTo(x, y, x + w, y, r);
+  context.closePath();
+}
+
+// Cada skin define cómo se dibuja un bloque (x, y en celdas) y, opcionalmente,
+// la grilla. Los colores vienen de las variables CSS (:root[data-skin]).
+const SKINS = {
+  retro: {
+    block(context, x, y, color, size) {
+      context.fillStyle = color;
+      context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+      context.fillStyle = theme.highlight;
+      context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+    },
+  },
+  neon: {
+    block(context, x, y, color, size) {
+      const px = x * size + 3, py = y * size + 3, s = size - 6;
+      context.shadowColor = color;
+      context.shadowBlur = 12;
+      context.fillStyle = color;
+      context.fillRect(px, py, s, s);
+      context.shadowBlur = 0;
+      // núcleo más claro
+      context.fillStyle = theme.highlight;
+      context.fillRect(px + 3, py + 3, s - 6, s - 6);
+    },
+  },
+  pastel: {
+    block(context, x, y, color, size) {
+      const px = x * size + 2, py = y * size + 2, s = size - 4;
+      context.fillStyle = color;
+      roundedRect(context, px, py, s, s, 8);
+      context.fill();
+      context.fillStyle = theme.highlight;
+      roundedRect(context, px + 3, py + 3, s - 6, 5, 3);
+      context.fill();
+    },
+  },
+  pixel: {
+    block(context, x, y, color, size) {
+      const px = x * size, py = y * size, p = 3; // tamaño del "píxel"
+      context.fillStyle = color;
+      context.fillRect(px + 1, py + 1, size - 2, size - 2);
+      // textura de tablero de ajedrez
+      context.fillStyle = theme.highlight;
+      for (let i = 1; i < size / p - 1; i++)
+        for (let j = 1; j < size / p - 1; j++)
+          if ((i + j) % 2 === 0) context.fillRect(px + i * p, py + j * p, p, p);
+      // bisel
+      context.fillStyle = theme.highlight;
+      context.fillRect(px + 1, py + 1, size - 2, p);
+      context.fillRect(px + 1, py + 1, p, size - 2);
+      context.fillStyle = 'rgba(0, 0, 0, 0.3)';
+      context.fillRect(px + 1, py + size - 1 - p, size - 2, p);
+      context.fillRect(px + size - 1 - p, py + 1, p, size - 2);
+    },
+  },
+};
+
+let currentSkin = 'retro';
+
 function drawBlock(context, x, y, colorIndex, size, alpha) {
   if (!colorIndex) return;
-  const color = COLORS[colorIndex];
   context.globalAlpha = alpha ?? 1;
-  context.fillStyle = color;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
-  // highlight
-  context.fillStyle = theme.highlight;
-  context.fillRect(x * size + 1, y * size + 1, size - 2, 4);
+  SKINS[currentSkin].block(context, x, y, COLORS[colorIndex], size);
   context.globalAlpha = 1;
+  context.shadowBlur = 0;
+  context.shadowColor = 'transparent';
 }
 
 function drawGrid() {
@@ -323,6 +390,36 @@ function setTheme(mode) {
 themeToggle.addEventListener('click', () => {
   setTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
   themeToggle.blur(); // evita que Space (caída) active el botón
+});
+
+const skinSelect = document.getElementById('skin-select');
+
+function setSkin(name) {
+  if (!SKINS[name]) name = 'retro';
+  currentSkin = name;
+  document.documentElement.dataset.skin = name;
+  skinSelect.value = name;
+  loadTheme();
+  draw();
+  drawNext();
+}
+
+skinSelect.addEventListener('change', () => {
+  setSkin(skinSelect.value);
+  try { localStorage.setItem('tetris.skin', currentSkin); } catch (e) {}
+  skinSelect.blur(); // evita que las flechas cambien la skin durante el juego
+});
+
+let savedSkin = null;
+try { savedSkin = localStorage.getItem('tetris.skin'); } catch (e) {}
+if (SKINS[savedSkin]) {
+  currentSkin = savedSkin;
+  document.documentElement.dataset.skin = savedSkin;
+  skinSelect.value = savedSkin;
+}
+// Si el menú se cierra sin cambiar, quita el foco para que las flechas no lo toquen.
+skinSelect.addEventListener('keydown', e => {
+  if (e.key === 'Escape') skinSelect.blur();
 });
 
 loadTheme();
