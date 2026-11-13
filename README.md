@@ -13,6 +13,7 @@ Implementación del clásico **Tetris** en JavaScript vanilla, usando HTML5 Canv
 - [Tetris](#tetris)
   - [Tabla de contenidos](#tabla-de-contenidos)
   - [Qué hace el proyecto](#qué-hace-el-proyecto)
+  - [Records](#records)
   - [Cómo ejecutar el juego](#cómo-ejecutar-el-juego)
     - [Opción 1: abrir el archivo directamente](#opción-1-abrir-el-archivo-directamente)
     - [Opción 2: servidor local (recomendado)](#opción-2-servidor-local-recomendado)
@@ -43,7 +44,18 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Sistema de puntuación** clásico de Tetris (100 / 300 / 500 / 800 multiplicado por nivel).
 - **Niveles** que aumentan cada 10 líneas y aceleran la caída.
 - **Pausa** y **Game Over** con opción de reinicio.
+- **Records locales**: Top 5 guardado en `localStorage` (ver [Records](#records)).
 - **Modo claro / oscuro**: el juego inicia siempre en oscuro; el interruptor `LIGHT` (abajo a la derecha del panel) cambia el tema durante la partida. La preferencia no se guarda entre sesiones.
+
+---
+
+## Records
+
+- Al abrir el juego aparece una **pantalla de inicio** con el Top 5, el **mejor combo** y el **máximo de líneas**; la partida empieza al pulsar **Jugar**.
+- Un _combo_ cuenta piezas consecutivas que limpian al menos una línea; fijar una pieza sin limpiar lo reinicia.
+- Si al terminar la puntuación entra en el Top 5, el overlay de Game Over pide un nombre (máx. 12 caracteres) y resalta la fila nueva al pulsar **Guardar** (o Enter).
+- El botón **Borrar records** (con confirmación) elimina el Top 5 y los mejores.
+- Claves usadas: `tetris.highscores`, `tetris.bests` y `tetris.lastName`. Si `localStorage` no está disponible, el juego sigue funcionando sin guardar.
 
 ---
 
