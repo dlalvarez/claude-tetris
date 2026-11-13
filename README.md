@@ -44,6 +44,7 @@ Es una versión jugable del Tetris clásico con todas las mecánicas que esperar
 - **Niveles** que aumentan cada 10 líneas y aceleran la caída.
 - **Pausa** y **Game Over** con opción de reinicio.
 - **Modo claro / oscuro**: el juego inicia siempre en oscuro; el interruptor `LIGHT` (abajo a la derecha del panel) cambia el tema durante la partida. La preferencia no se guarda entre sesiones.
+- **Tabla de records local** (`localStorage`, clave `tetris.records`): top 5 de puntuaciones con nombre (máx. 12 caracteres, se pide al terminar la partida si entras al top), visible en la pantalla de inicio y en el overlay de Game Over. La entrada actual aparece resaltada. También guarda el **mejor combo** (bloqueos consecutivos que limpian al menos una línea) y las **líneas máximas** en una sola partida. El botón `Resetear records` borra todo. Si reinicias sin escribir nombre, se guarda como `ANÓNIMO`.
 
 ---
 
@@ -100,7 +101,7 @@ Define la estructura visual:
 
 - Un `<canvas id="board">` de **300 × 600** píxeles donde se renderiza el tablero.
 - Un panel lateral con `SCORE`, `LINES`, `LEVEL`, vista de la siguiente pieza y la lista de controles.
-- Un overlay para los estados **PAUSA** y **GAME OVER**.
+- Un overlay para los estados **inicio**, **PAUSA** y **GAME OVER**, con el formulario de nombre y la tabla de records.
 
 ### 2. `style.css`
 
